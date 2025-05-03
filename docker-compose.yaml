@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: app
+    build: ./
+    stop_signal: SIGINT
+    stop_grace_period: 5s
+    ports:
+      - "8080:8080"
+    env_file:
+      - secrets.env
+    restart: on-failure
+    volumes:
+      - ./backends:/app/backends
+    networks:
+      - app_network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - app_network
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  grafana-storage:
