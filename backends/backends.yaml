@@ -1,13 +1,1 @@
 backends:
-  - name: backend1
-    address: http://host.docker.internal:8085
-    burst: 20
-    rate: 10
-  - name: backend2
-    address: http://host.docker.internal:8086
-    burst: 20
-    rate: 10
-  - name: backend3
-    address: http://host.docker.internal:8087
-    burst: 20
-    rate: 10
